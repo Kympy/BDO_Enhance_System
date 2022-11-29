@@ -47,8 +47,8 @@ void EnhanceSystem::Enhance(){
     }
     // 0 ~ 100 사이의 double 형 난수를 생성한다
     // 해당 난수가 아이템의 현재 강화 확률 범위 안에 존재하면 강화 성공
-    double myPercent = currentItem->GetPercent() + currentItem->GetDelta() * currentItem->GetStack();
-    if(randPercent(mersenne) <= myPercent){
+    //double myPercent = currentItem->GetPercent() + currentItem->GetDelta() * currentItem->GetStack();
+    if(randPercent(mersenne) <= currentItem->GetPercent()){
         Success();
     }
     else{
