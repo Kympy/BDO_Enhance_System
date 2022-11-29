@@ -4,24 +4,31 @@
 #include <string>
 #include <map>
 using namespace std;
-
+// 아이템의 타입 -> 장비, 악세사리
 enum class ItemType{
     Equipment, Jewelry
 };
-
+// 아이템의 타입에 대응되는 문자열
 const map<ItemType, string> typeName{
     { ItemType::Equipment, "Equipment" },
     { ItemType::Jewelry, "Jewelry"}
 };
-
+// 아이템 최상위 클래스
 class Item{
 protected:
+    // 아이템의 이름
     string name;
+    // 아이템의 타입
     ItemType myType;
+    // 현재 강화 단계
     int level;
+    // 현재 쌓인 스택
     int stack;
+    // 현재 강화 성공률
     double percent;
+    // 현재 스택 당 강화 성공률 증가량
     double delta;
+    // 현재 Level을 기반으로 강화 성공률 계산
     virtual void Calculate() { }
 public:
     Item(){
@@ -39,17 +46,22 @@ public:
     int GetStack(){
         return stack;
     }
+    /// @brief 강화 성공 시 레벨 변경
     virtual void LevelChanged(){
         level += 1;
         stack = 0;
     }
+    /// @brief 강화 실패 시 스택 변경
     virtual void LevelDown(){
         stack += 1;
     }
     int GetLevel(){
         return level;
     }
+    /// @brief 현재 강화 단계에 대응되는 문자열 출력
+    /// @return 강화 단계 문자 표시
     string GetStringLevel(){
+        // 15 단계 까지는 숫자로 표시
         if(level < 16){
             return to_string(level);
         }
@@ -80,20 +92,21 @@ public:
     double GetDelta(){
         return delta;
     }
-    virtual void Failed(){
-
-    }
+    virtual void Failed(){ }
+    /// @brief 임의로 스택을 추가시킴
+    /// @param value 추가할 스택 수치
     void AddStack(int value){
         stack += value;
         percent += delta * value;
     }
 };
-
+// 아이템 클래스를 상속 받는 장비 클래스
 class Equipment : public Item{
 public:
     Equipment(){
         myType = ItemType::Equipment;
     }
+    // 장비 아이템의 단계 별 확률 데이터
     virtual void Calculate(){
         switch(level){
             case 14:{
@@ -141,7 +154,7 @@ public:
         percent += delta * stack;
     }
 };
-
+// 장비 클래스를 상속 받는 검 클래스
 class Sword : public Equipment{
 public:
     Sword(string name){
@@ -153,7 +166,7 @@ public:
     }
     ~Sword();
 };
-
+// 아이템 클래스를 상속 받는 악세사리 클래스
 class Jewelry : public Item{
 public :
     Jewelry(){
@@ -201,7 +214,7 @@ public :
         percent += delta * stack;
     }
 };
-
+// 악세사리 클래스를 상속 받는 반지 클래스
 class Ring : public Jewelry{
 public:
     Ring(string name){
@@ -213,9 +226,10 @@ public:
     }
     ~Ring();
 };
-
+// 강화 시스템 클래스
 class EnhanceSystem{
 private:
+    // 현재 강화 시스템에 활성화 된 아이템
     Item* currentItem;
 public:
     EnhanceSystem();
